@@ -8,10 +8,9 @@ stop:
 down:
 	docker-compose down
 npm-install:
-	docker exec frontend_container bash -c "npm install"
+	docker exec crud_frontend_app bash -c "npm install"
 shell:
-	docker exec -it frontend_container bash
+	docker exec -it crud_frontend_app bash
 setup:
 	@make build
 	@make start
-	@make npm-install
