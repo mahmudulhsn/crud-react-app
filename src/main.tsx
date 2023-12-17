@@ -6,6 +6,7 @@ import GuestLayout from "./layouts/GuestLayout";
 import Login from "./components/Login";
 import UsersList from "./components/users/UsersList";
 import DashboardLayout from "./layouts/DashboardLayout";
+import CreateUser from "./components/users/CreateUser";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "users",
         element: <UsersList />,
+      },
+      {
+        path: "users/create",
+        element: <CreateUser />,
       },
     ],
   },
