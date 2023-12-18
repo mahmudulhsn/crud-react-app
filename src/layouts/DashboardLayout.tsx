@@ -2,6 +2,7 @@ import { Link, NavLink, Navigate, Outlet } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider";
 import axiosClient from "../utils/axiosClient";
 import { useEffect } from "react";
+import Toast from "../components/Toast";
 
 const DashboardLayout = () => {
   const { userToken, setCurrentUser, setUserToken } = useStateContext();
@@ -91,6 +92,7 @@ const DashboardLayout = () => {
 
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <Outlet />
+          <Toast />
         </div>
       </div>
     </>

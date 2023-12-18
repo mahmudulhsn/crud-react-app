@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axiosClient from "../../utils/axiosClient";
+import { useStateContext } from "../../contexts/ContextProvider";
+import { useState } from "react";
+import { redirect } from "react-router-dom";
 
 type CreateUserType = {
   name: string;
@@ -15,6 +19,9 @@ type CreateUserType = {
 };
 
 const CreateUser = () => {
+  const { showToast } = useStateContext();
+  const [error, setError] = useState({});
+
   const userCreateSchema = z
     .object({
       name: z.string().min(1, { message: "Name is required" }),
@@ -48,6 +55,22 @@ const CreateUser = () => {
 
   const onSubmit: SubmitHandler<CreateUserType> = (data) => {
     console.log(data);
+
+    axiosClient
+      .post("/users", data)
+      .then(({ data }) => {
+        console.log(data);
+        showToast("User created successfully.");
+        redirect("/dashboard/users/list");
+      })
+      .catch((err) => {
+        if (err.response.status === 422) {
+          setError(err.response.data.errors);
+          console.log(error);
+        } else {
+          console.log(err);
+        }
+      });
   };
 
   return (

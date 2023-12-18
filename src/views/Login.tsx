@@ -31,10 +31,8 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit: SubmitHandler<LoginType> = async (data) => {
-    console.log(data);
-
-    await axiosClient
+  const onSubmit: SubmitHandler<LoginType> = (data) => {
+    axiosClient
       .post("/login", data)
       .then(({ data }) => {
         setCurrentUser(data.data.user);
