@@ -6,6 +6,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
+import { User } from "../views/users/UsersList";
 
 interface Toast {
   message: string;
@@ -15,8 +16,10 @@ interface Toast {
 interface StateContextType {
   currentUser: any;
   userToken: string | null;
+  userList: User[];
   toast: Toast;
   setCurrentUser: Dispatch<SetStateAction<any>>;
+  setUserList: (users: User[]) => void;
   setUserToken: (token: string) => void;
   showToast: (message: string) => void;
 }
@@ -24,11 +27,13 @@ interface StateContextType {
 const defaultState: StateContextType = {
   currentUser: {},
   userToken: "",
+  userList: [],
   toast: {
     message: "",
     show: false,
   },
   setCurrentUser: () => {},
+  setUserList: () => {},
   setUserToken: () => {},
   showToast: () => {},
 };
@@ -39,6 +44,7 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [currentUser, setCurrentUser] = useState<any>({});
+  const [userList, setUserList] = useState<User[]>([]);
   const [userToken, _setUserToken] = useState<string>(
     localStorage.getItem("TOKEN") || ""
   );
@@ -69,6 +75,8 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
         setUserToken,
         toast,
         showToast,
+        userList,
+        setUserList,
       }}
     >
       {children}
