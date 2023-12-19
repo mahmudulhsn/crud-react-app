@@ -2,7 +2,6 @@ import { useStateContext } from "../contexts/ContextProvider";
 
 const Toast = () => {
   const { toast } = useStateContext();
-  console.log(toast);
   return (
     <>
       {toast.show && (

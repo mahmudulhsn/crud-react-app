@@ -6,25 +6,45 @@ import {
 } from "mantine-react-table";
 import axiosClient from "../../utils/axiosClient";
 import { useStateContext } from "../../contexts/ContextProvider";
+import { Link } from "react-router-dom";
 
 export type User = {
   id: number;
   name: string;
   email: string;
   website: string;
+  phone: string;
+  gender: string;
+  age: string;
+  nationality: string;
+  created_by: number;
 };
 
 const UsersList = () => {
-  const { userList, setUserList } = useStateContext();
+  const { userList, setUserList, showToast } = useStateContext();
 
-  useEffect(() => {
+  const getUsers = () => {
     axiosClient
       .get("/users")
       .then(({ data }) => {
         setUserList(data.data.users);
       })
       .catch((err) => console.error(err));
+  };
+
+  useEffect(() => {
+    getUsers();
   }, []);
+
+  const deleteUser = (userId: number) => {
+    axiosClient
+      .delete(`/users/${userId}`)
+      .then(({ data }) => {
+        showToast(data.message);
+        getUsers();
+      })
+      .catch((err) => console.error(err));
+  };
 
   const columns = useMemo<MRT_ColumnDef<User>[]>(
     () => [
@@ -40,6 +60,26 @@ const UsersList = () => {
         accessorKey: "website",
         header: "Website",
       },
+      {
+        accessorKey: "phone",
+        header: "phone",
+      },
+      // {
+      //   accessorKey: "gender",
+      //   header: "gender",
+      // },
+      // {
+      //   accessorKey: "age",
+      //   header: "age",
+      // },
+      // {
+      //   accessorKey: "nationality",
+      //   header: "nationality",
+      // },
+      {
+        accessorKey: "created_by",
+        header: "created_by",
+      },
     ],
     []
   );
@@ -50,15 +90,17 @@ const UsersList = () => {
     enableRowActions: true,
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
-      <>
-        <button
+      <div className=" text-center">
+        <Link
+          to={`/dashboard/users/edit/${row.original.id}`}
           className="w-full"
-          onClick={() => console.log(row.original?.id)}
         >
           Edit
+        </Link>
+        <button className="w-full" onClick={() => deleteUser(row.original.id)}>
+          Delete
         </button>
-        <button className="w-full">Delete</button>
-      </>
+      </div>
     ),
   });
 

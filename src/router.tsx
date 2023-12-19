@@ -4,6 +4,7 @@ import UsersList from "./views/users/UsersList";
 import DashboardLayout from "./layouts/DashboardLayout";
 import CreateUser from "./views/users/CreateUser";
 import { createBrowserRouter } from "react-router-dom";
+import EditUser from "./views/users/EditUser";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "users/create",
         element: <CreateUser />,
+      },
+      {
+        path: "users/edit/:userId",
+        element: <EditUser />,
       },
     ],
   },
