@@ -31,7 +31,6 @@ const UsersList = () => {
     axiosClient
       .get("/users")
       .then(({ data }) => {
-        console.log(data.data.users);
         setUserList(data.data.users);
       })
       .catch((err) => console.error(err));
