@@ -5,6 +5,9 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import CreateUser from "./views/users/CreateUser";
 import { createBrowserRouter } from "react-router-dom";
 import EditUser from "./views/users/EditUser";
+import AddressBooksList from "./views/addressBooks/AddressBooksList";
+import CreateAddressBook from "./views/addressBooks/CreateAddressBook";
+import EditAddressBook from "./views/addressBooks/EditAddressBook";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +25,7 @@ const router = createBrowserRouter([
     element: <DashboardLayout />,
     children: [
       {
-        path: "users/list",
+        path: "users",
         element: <UsersList />,
       },
       {
@@ -32,6 +35,18 @@ const router = createBrowserRouter([
       {
         path: "users/edit/:userId",
         element: <EditUser />,
+      },
+      {
+        path: "address-books",
+        element: <AddressBooksList />,
+      },
+      {
+        path: "address-books/create",
+        element: <CreateAddressBook />,
+      },
+      {
+        path: "address-books/edit/:addressBookId",
+        element: <EditAddressBook />,
       },
     ],
   },

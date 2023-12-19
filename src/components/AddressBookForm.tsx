@@ -1,71 +1,58 @@
 import { useState } from "react";
-import { User } from "../views/users/UsersList";
 import { useStateContext } from "../contexts/ContextProvider";
 import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axiosClient from "../utils/axiosClient";
 import { z } from "zod";
+import { AddressBook } from "../views/addressBooks/AddressBooksList";
 
-type CreateUserType = {
+type CreateAddressBookType = {
   name: string;
   email: string;
   phone: string;
   website: string;
   gender: string;
-  // created_by: string;
+  // user_id: string;
   age: string;
   nationality: string;
-  password?: string;
-  confirm_password?: string;
 };
 
-const UserForm = ({ user }: { user?: User }) => {
-  console.log(user);
+const AddressBookForm = ({ addressBook }: { addressBook?: AddressBook }) => {
+  console.log(addressBook);
   const { showToast } = useStateContext();
   const [apiErrors, setApiErrors] = useState<any>([]);
   const navigate = useNavigate();
 
-  const defaultValues: CreateUserType = {
-    name: user ? user.name : "",
-    email: user ? user.email : "",
-    phone: user ? user.phone : "",
-    website: user ? user.website : "",
-    gender: user ? user.gender : "",
-    // created_by: user ? user.user?.id : "",
-    age: user ? user.age : "",
-    nationality: user ? user.nationality : "",
+  const defaultValues: CreateAddressBookType = {
+    name: addressBook ? addressBook.name : "",
+    email: addressBook ? addressBook.email : "",
+    phone: addressBook ? addressBook.phone : "",
+    website: addressBook ? addressBook.website : "",
+    gender: addressBook ? addressBook.gender : "",
+    // user_id: addressBook ? addressBook.addressBook?.id : "",
+    age: addressBook ? addressBook.age : "",
+    nationality: addressBook ? addressBook.nationality : "",
   };
 
-  const userCreateSchema = z
-    .object({
-      name: z.string().min(1, { message: "Name is required" }),
-      email: z.string().email(),
-      phone: z.string(),
-      website: z.string(),
-      gender: z.string(),
-      // created_by: z.string(),
-      age: z.string(),
-      nationality: z.string(),
-      password: z
-        .string()
-        .min(6, { message: "Password must be at least 6 characters" }),
-      confirm_password: z
-        .string()
-        .min(1, { message: "Confirm Password is required" }),
-    })
-    .refine((data) => data.password === data.confirm_password, {
-      path: ["confirm_password"],
-      message: "Password don't match",
-    });
-
-  const userEditSchema = z.object({
+  const addressBookCreateSchema = z.object({
     name: z.string().min(1, { message: "Name is required" }),
     email: z.string().email(),
     phone: z.string(),
     website: z.string(),
     gender: z.string(),
-    // created_by: z.string(),
+    // user_id: z.string(),
+    age: z.string(),
+    nationality: z.string(),
+  });
+
+  const addressBookEditSchema = z.object({
+    name: z.string().min(1, { message: "Name is required" }),
+    email: z.string().email(),
+    phone: z.string(),
+    website: z.string(),
+    gender: z.string(),
+    // user_id: z.string(),
     age: z.string(),
     nationality: z.string(),
   });
@@ -74,20 +61,21 @@ const UserForm = ({ user }: { user?: User }) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof userCreateSchema>>({
-    resolver: !user
-      ? zodResolver(userCreateSchema)
-      : zodResolver(userEditSchema),
+  } = useForm<z.infer<typeof addressBookCreateSchema>>({
+    resolver: !addressBook
+      ? zodResolver(addressBookCreateSchema)
+      : zodResolver(addressBookEditSchema),
     defaultValues: defaultValues,
   });
 
-  const onSubmit: SubmitHandler<CreateUserType> = (data) => {
-    if (user) {
+  const onSubmit: SubmitHandler<CreateAddressBookType> = (data) => {
+    console.log(data);
+    if (addressBook) {
       axiosClient
-        .put(`/users/${user.id}`, data)
+        .put(`/address-books/${addressBook.id}`, data)
         .then(({ data }) => {
           showToast(data.message);
-          navigate("/dashboard/users");
+          navigate("/dashboard/address-books");
         })
         .catch((err) => {
           if (err.response.status === 422) {
@@ -98,10 +86,10 @@ const UserForm = ({ user }: { user?: User }) => {
         });
     } else {
       axiosClient
-        .post("/users", data)
+        .post("/address-books", data)
         .then(({ data }) => {
           showToast(data.message);
-          navigate("/dashboard/users");
+          navigate("/dashboard/address-books");
         })
         .catch((err) => {
           if (err.response.status === 422) {
@@ -116,7 +104,7 @@ const UserForm = ({ user }: { user?: User }) => {
   return (
     <div className="w-full">
       <h1 className="text-2xl text-bold py-2">
-        {user ? "Update User" : "Create New User"}
+        {addressBook ? "Update addressBook" : "Create New addressBook"}
       </h1>
       <div className="bg-white p-10 rounded">
         <form
@@ -237,28 +225,28 @@ const UserForm = ({ user }: { user?: User }) => {
           </div>
           {/* <div>
             <label
-              htmlFor="created_by"
+              htmlFor="user_id"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Created By
             </label>
             <select
-              {...register("created_by")}
-              name="created_by"
-              id="created_by"
+              {...register("user_id")}
+              name="user_id"
+              id="user_id"
               className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              {userList.map((user) => (
-                <option value={user.id} key={user.id}>
-                  {user.name}
+              {addressBookList.map((addressBook) => (
+                <option value={addressBook.id} key={addressBook.id}>
+                  {addressBook.name}
                 </option>
               ))}
             </select>
-            {errors.created_by && (
-              <span className="text-red-500">{errors.created_by.message}</span>
+            {errors.user_id && (
+              <span className="text-red-500">{errors.user_id.message}</span>
             )}
-            {apiErrors.created_by && (
-              <span className="text-red-500">{apiErrors.created_by}</span>
+            {apiErrors.user_id && (
+              <span className="text-red-500">{apiErrors.user_id}</span>
             )}
           </div> */}
           <div>
@@ -305,60 +293,6 @@ const UserForm = ({ user }: { user?: User }) => {
               <span className="text-red-500">{apiErrors.nationality}</span>
             )}
           </div>
-          {!user && (
-            <>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Password
-                </label>
-                <input
-                  {...register("password")}
-                  type="password"
-                  name="password"
-                  id="password"
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                />
-                {errors.password && (
-                  <span className="text-red-500">
-                    {errors.password.message}
-                  </span>
-                )}
-                {apiErrors.password && (
-                  <span className="text-red-500">{apiErrors.password}</span>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="confirm_password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Confirm Password
-                </label>
-                <input
-                  {...register("confirm_password")}
-                  type="password"
-                  name="confirm_password"
-                  id="confirm_password"
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                />
-                {errors.confirm_password && (
-                  <span className="text-red-500">
-                    {errors.confirm_password.message}
-                  </span>
-                )}
-                {apiErrors.confirm_password && (
-                  <span className="text-red-500">
-                    {apiErrors.confirm_password}
-                  </span>
-                )}
-              </div>
-            </>
-          )}
 
           <button
             type="submit"
@@ -372,4 +306,4 @@ const UserForm = ({ user }: { user?: User }) => {
   );
 };
 
-export default UserForm;
+export default AddressBookForm;

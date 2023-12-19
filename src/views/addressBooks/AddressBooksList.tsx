@@ -8,7 +8,7 @@ import axiosClient from "../../utils/axiosClient";
 import { useStateContext } from "../../contexts/ContextProvider";
 import { Link } from "react-router-dom";
 
-export type User = {
+export type AddressBook = {
   id: number;
   name: string;
   email: string;
@@ -24,33 +24,33 @@ export type User = {
   created_by: number;
 };
 
-const UsersList = () => {
-  const { userList, setUserList, showToast } = useStateContext();
+const AddressBooksList = () => {
+  const { addressBookList, setAddressBookList, showToast } = useStateContext();
 
-  const getUsers = () => {
+  const getAddressBooks = () => {
     axiosClient
-      .get("/users")
+      .get("/address-books")
       .then(({ data }) => {
-        setUserList(data.data.users);
+        setAddressBookList(data.data.addressBooks);
       })
       .catch((err) => console.error(err));
   };
 
   useEffect(() => {
-    getUsers();
+    getAddressBooks();
   }, []);
 
   const deleteUser = (userId: number) => {
     axiosClient
-      .delete(`/users/${userId}`)
+      .delete(`/address-books/${userId}`)
       .then(({ data }) => {
         showToast(data.message);
-        getUsers();
+        getAddressBooks();
       })
       .catch((err) => console.error(err));
   };
 
-  const columns = useMemo<MRT_ColumnDef<User>[]>(
+  const columns = useMemo<MRT_ColumnDef<AddressBook>[]>(
     () => [
       {
         accessorKey: "name",
@@ -60,19 +60,32 @@ const UsersList = () => {
         accessorKey: "email",
         header: "Email",
       },
+      {
+        accessorKey: "website",
+        header: "Website",
+      },
+      {
+        accessorKey: "phone",
+        header: "Phone",
+      },
+
+      {
+        accessorKey: "user.name",
+        header: "Created By",
+      },
     ],
     []
   );
 
   const table = useMantineReactTable({
-    data: userList,
+    data: addressBookList,
     columns,
     enableRowActions: true,
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
       <div className=" text-center">
         <Link
-          to={`/dashboard/users/edit/${row.original.id}`}
+          to={`/dashboard/address-books/edit/${row.original.id}`}
           className="w-full"
         >
           Edit
@@ -87,10 +100,10 @@ const UsersList = () => {
   return (
     <div className="w-full">
       <div className="flex justify-between">
-        <h1 className="py-6 text-2xl">Users List</h1>
+        <h1 className="py-6 text-2xl">Address Books List</h1>
         <div className="flex justify-center items-center">
           <Link
-            to="/dashboard/users/create"
+            to="/dashboard/address-books/create"
             className="py-2 px-2 bg-green-500 text-xl rounded text-white"
           >
             Create
@@ -102,4 +115,4 @@ const UsersList = () => {
   );
 };
 
-export default UsersList;
+export default AddressBooksList;
