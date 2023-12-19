@@ -13,6 +13,7 @@ type CreateUserType = {
   phone: string;
   website: string;
   gender: string;
+  // created_by: string;
   age: string;
   nationality: string;
   password?: string;
@@ -20,6 +21,7 @@ type CreateUserType = {
 };
 
 const UserForm = ({ user }: { user?: User }) => {
+  console.log(user);
   const { showToast } = useStateContext();
   const [apiErrors, setApiErrors] = useState<any>([]);
   const navigate = useNavigate();
@@ -30,6 +32,7 @@ const UserForm = ({ user }: { user?: User }) => {
     phone: user ? user.phone : "",
     website: user ? user.website : "",
     gender: user ? user.gender : "",
+    // created_by: user ? user.user?.id : "",
     age: user ? user.age : "",
     nationality: user ? user.nationality : "",
   };
@@ -41,6 +44,7 @@ const UserForm = ({ user }: { user?: User }) => {
       phone: z.string(),
       website: z.string(),
       gender: z.string(),
+      // created_by: z.string(),
       age: z.string(),
       nationality: z.string(),
       password: z
@@ -61,6 +65,7 @@ const UserForm = ({ user }: { user?: User }) => {
     phone: z.string(),
     website: z.string(),
     gender: z.string(),
+    // created_by: z.string(),
     age: z.string(),
     nationality: z.string(),
   });
@@ -230,6 +235,32 @@ const UserForm = ({ user }: { user?: User }) => {
               <span className="text-red-500">{apiErrors.gender}</span>
             )}
           </div>
+          {/* <div>
+            <label
+              htmlFor="created_by"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Created By
+            </label>
+            <select
+              {...register("created_by")}
+              name="created_by"
+              id="created_by"
+              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              {userList.map((user) => (
+                <option value={user.id} key={user.id}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
+            {errors.created_by && (
+              <span className="text-red-500">{errors.created_by.message}</span>
+            )}
+            {apiErrors.created_by && (
+              <span className="text-red-500">{apiErrors.created_by}</span>
+            )}
+          </div> */}
           <div>
             <label
               htmlFor="age"

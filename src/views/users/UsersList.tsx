@@ -15,6 +15,10 @@ export type User = {
   website: string;
   phone: string;
   gender: string;
+  user: {
+    id: string;
+    name: string;
+  };
   age: string;
   nationality: string;
   created_by: number;
@@ -27,6 +31,7 @@ const UsersList = () => {
     axiosClient
       .get("/users")
       .then(({ data }) => {
+        console.log(data.data.users);
         setUserList(data.data.users);
       })
       .catch((err) => console.error(err));
@@ -62,23 +67,12 @@ const UsersList = () => {
       },
       {
         accessorKey: "phone",
-        header: "phone",
+        header: "Phone",
       },
-      // {
-      //   accessorKey: "gender",
-      //   header: "gender",
-      // },
-      // {
-      //   accessorKey: "age",
-      //   header: "age",
-      // },
-      // {
-      //   accessorKey: "nationality",
-      //   header: "nationality",
-      // },
+
       {
-        accessorKey: "created_by",
-        header: "created_by",
+        accessorKey: "user.name",
+        header: "Created By",
       },
     ],
     []
