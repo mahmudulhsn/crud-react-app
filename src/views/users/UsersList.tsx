@@ -1,115 +1,99 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   MantineReactTable,
   useMantineReactTable,
   type MRT_ColumnDef,
 } from "mantine-react-table";
+import axiosClient from "../../utils/axiosClient";
+import { useStateContext } from "../../contexts/ContextProvider";
+import { Link } from "react-router-dom";
 
-type User = {
-  name: {
-    firstName: string;
-    lastName: string;
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  website: string;
+  phone: string;
+  gender: string;
+  user: {
+    id: string;
+    name: string;
   };
-  address: string;
-  city: string;
-  state: string;
+  age: string;
+  nationality: string;
+  created_by: number;
 };
 
-//nested data is ok, see accessorKeys in ColumnDef below
-const data: User[] = [
-  {
-    name: {
-      firstName: "Zachary",
-      lastName: "Davis",
-    },
-    address: "261 Battle Ford",
-    city: "Columbus",
-    state: "Ohio",
-  },
-  {
-    name: {
-      firstName: "Robert",
-      lastName: "Smith",
-    },
-    address: "566 Brakus Inlet",
-    city: "Westerville",
-    state: "West Virginia",
-  },
-  {
-    name: {
-      firstName: "Kevin",
-      lastName: "Yan",
-    },
-    address: "7777 Kuhic Knoll",
-    city: "South Linda",
-    state: "West Virginia",
-  },
-  {
-    name: {
-      firstName: "John",
-      lastName: "Upton",
-    },
-    address: "722 Emie Stream",
-    city: "Huntington",
-    state: "Washington",
-  },
-  {
-    name: {
-      firstName: "Nathan",
-      lastName: "Harris",
-    },
-    address: "1 Kuhic Knoll",
-    city: "Ohiowa",
-    state: "Nebraska",
-  },
-  {
-    name: {
-      firstName: "Nathan",
-      lastName: "Harris",
-    },
-    address: "1 Kuhic Knoll",
-    city: "Ohiowa",
-    state: "Nebraska",
-  },
-];
-
 const UsersList = () => {
+  const { userList, setUserList, showToast } = useStateContext();
+
+  const getUsers = () => {
+    axiosClient
+      .get("/users")
+      .then(({ data }) => {
+        setUserList(data.data.users);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  const deleteUser = (userId: number) => {
+    axiosClient
+      .delete(`/users/${userId}`)
+      .then(({ data }) => {
+        showToast(data.message);
+        getUsers();
+      })
+      .catch((err) => console.error(err));
+  };
+
   const columns = useMemo<MRT_ColumnDef<User>[]>(
     () => [
       {
-        accessorKey: "name.firstName", //access nested data with dot notation
-        header: "First Name",
+        accessorKey: "name",
+        header: "Name",
       },
       {
-        accessorKey: "name.lastName",
-        header: "Last Name",
+        accessorKey: "email",
+        header: "Email",
       },
       {
-        accessorKey: "address", //normal accessorKey
-        header: "Address",
+        accessorKey: "website",
+        header: "Website",
       },
       {
-        accessorKey: "city",
-        header: "City",
+        accessorKey: "phone",
+        header: "Phone",
       },
+
       {
-        accessorKey: "state",
-        header: "State",
+        accessorKey: "user.name",
+        header: "Created By",
       },
     ],
     []
   );
 
   const table = useMantineReactTable({
+    data: userList,
     columns,
-    data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
     enableRowActions: true,
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
-      <>
-        <button className="w-full">Edit</button>
-        <button className="w-full">Delete</button>
-      </>
+      <div className=" text-center">
+        <Link
+          to={`/dashboard/users/edit/${row.original.id}`}
+          className="w-full"
+        >
+          Edit
+        </Link>
+        <button className="w-full" onClick={() => deleteUser(row.original.id)}>
+          Delete
+        </button>
+      </div>
     ),
   });
 
