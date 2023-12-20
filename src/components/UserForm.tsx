@@ -10,12 +10,6 @@ import { z } from "zod";
 type CreateUserType = {
   name: string;
   email: string;
-  phone: string;
-  website: string;
-  gender: string;
-  // created_by: string;
-  age: string;
-  nationality: string;
   password?: string;
   confirm_password?: string;
 };
@@ -29,24 +23,12 @@ const UserForm = ({ user }: { user?: User }) => {
   const defaultValues: CreateUserType = {
     name: user ? user.name : "",
     email: user ? user.email : "",
-    phone: user ? user.phone : "",
-    website: user ? user.website : "",
-    gender: user ? user.gender : "",
-    // created_by: user ? user.user?.id : "",
-    age: user ? user.age : "",
-    nationality: user ? user.nationality : "",
   };
 
   const userCreateSchema = z
     .object({
       name: z.string().min(1, { message: "Name is required" }),
       email: z.string().email(),
-      phone: z.string(),
-      website: z.string(),
-      gender: z.string(),
-      // created_by: z.string(),
-      age: z.string(),
-      nationality: z.string(),
       password: z
         .string()
         .min(6, { message: "Password must be at least 6 characters" }),
@@ -62,12 +44,6 @@ const UserForm = ({ user }: { user?: User }) => {
   const userEditSchema = z.object({
     name: z.string().min(1, { message: "Name is required" }),
     email: z.string().email(),
-    phone: z.string(),
-    website: z.string(),
-    gender: z.string(),
-    // created_by: z.string(),
-    age: z.string(),
-    nationality: z.string(),
   });
 
   const {
@@ -87,7 +63,7 @@ const UserForm = ({ user }: { user?: User }) => {
         .put(`/users/${user.id}`, data)
         .then(({ data }) => {
           showToast(data.message);
-          navigate("/dashboard/users/list");
+          navigate("/dashboard/users");
         })
         .catch((err) => {
           if (err.response.status === 422) {
@@ -101,7 +77,7 @@ const UserForm = ({ user }: { user?: User }) => {
         .post("/users", data)
         .then(({ data }) => {
           showToast(data.message);
-          navigate("/dashboard/users/list");
+          navigate("/dashboard/users");
         })
         .catch((err) => {
           if (err.response.status === 422) {
@@ -167,144 +143,7 @@ const UserForm = ({ user }: { user?: User }) => {
               <span className="text-red-500">{apiErrors.email}</span>
             )}
           </div>
-          <div>
-            <label
-              htmlFor="phone"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Phone
-            </label>
-            <input
-              {...register("phone")}
-              type="text"
-              name="phone"
-              id="phone"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="+8801111111111"
-            />
-            {errors.phone && (
-              <span className="text-red-500">{errors.phone.message}</span>
-            )}
-            {apiErrors.phone && (
-              <span className="text-red-500">{apiErrors.phone}</span>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="website"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Website
-            </label>
-            <input
-              {...register("website")}
-              type="text"
-              name="website"
-              id="website"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="https://example.com"
-            />
-            {errors.website && (
-              <span className="text-red-500">{errors.website.message}</span>
-            )}
-            {apiErrors.website && (
-              <span className="text-red-500">{apiErrors.website}</span>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="gender"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Gender
-            </label>
-            <select
-              {...register("gender")}
-              name="gender"
-              id="gender"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="others">Others</option>
-            </select>
-            {errors.gender && (
-              <span className="text-red-500">{errors.gender.message}</span>
-            )}
-            {apiErrors.gender && (
-              <span className="text-red-500">{apiErrors.gender}</span>
-            )}
-          </div>
-          {/* <div>
-            <label
-              htmlFor="created_by"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Created By
-            </label>
-            <select
-              {...register("created_by")}
-              name="created_by"
-              id="created_by"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            >
-              {userList.map((user) => (
-                <option value={user.id} key={user.id}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
-            {errors.created_by && (
-              <span className="text-red-500">{errors.created_by.message}</span>
-            )}
-            {apiErrors.created_by && (
-              <span className="text-red-500">{apiErrors.created_by}</span>
-            )}
-          </div> */}
-          <div>
-            <label
-              htmlFor="age"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Age
-            </label>
-            <input
-              {...register("age")}
-              type="text"
-              name="age"
-              id="age"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="28"
-            />
-            {errors.age && (
-              <span className="text-red-500">{errors.age.message}</span>
-            )}
-            {apiErrors.age && (
-              <span className="text-red-500">{apiErrors.age}</span>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="nationality"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Nationality
-            </label>
-            <input
-              {...register("nationality")}
-              type="text"
-              name="nationality"
-              id="nationality"
-              className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-400 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Bangladeshi"
-            />
-            {errors.nationality && (
-              <span className="text-red-500">{errors.nationality.message}</span>
-            )}
-            {apiErrors.nationality && (
-              <span className="text-red-500">{apiErrors.nationality}</span>
-            )}
-          </div>
+
           {!user && (
             <>
               <div>

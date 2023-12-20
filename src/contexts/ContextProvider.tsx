@@ -7,6 +7,7 @@ import React, {
   SetStateAction,
 } from "react";
 import { User } from "../views/users/UsersList";
+import { AddressBook } from "../views/addressBooks/AddressBooksList";
 
 interface Toast {
   message: string;
@@ -17,9 +18,11 @@ interface StateContextType {
   currentUser: any;
   userToken: string | null;
   userList: User[];
+  addressBookList: AddressBook[];
   toast: Toast;
   setCurrentUser: Dispatch<SetStateAction<any>>;
   setUserList: (users: User[]) => void;
+  setAddressBookList: (addressBooks: AddressBook[]) => void;
   setUserToken: (token: string) => void;
   showToast: (message: string) => void;
 }
@@ -28,12 +31,14 @@ const defaultState: StateContextType = {
   currentUser: {},
   userToken: "",
   userList: [],
+  addressBookList: [],
   toast: {
     message: "",
     show: false,
   },
   setCurrentUser: () => {},
   setUserList: () => {},
+  setAddressBookList: () => {},
   setUserToken: () => {},
   showToast: () => {},
 };
@@ -45,6 +50,7 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [currentUser, setCurrentUser] = useState<any>({});
   const [userList, setUserList] = useState<User[]>([]);
+  const [addressBookList, setAddressBookList] = useState<User[]>([]);
   const [userToken, _setUserToken] = useState<string>(
     localStorage.getItem("TOKEN") || ""
   );
@@ -77,6 +83,8 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({
         showToast,
         userList,
         setUserList,
+        addressBookList,
+        setAddressBookList,
       }}
     >
       {children}
